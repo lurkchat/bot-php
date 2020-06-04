@@ -30,25 +30,7 @@ class LurkchatBot {
      */
     public function __construct($token = null, $baseUrl = null)
     {
-        // Try to set token from config if not provided
-        if (!$token){
-            try{
-                $token = config('lurkchat-bot.token');
-            }catch (Exception $exception){}
-        }
-
-        $this->token = $token;
-
-        //Try to set url from config if not provided
-        if (!$baseUrl){
-            try{
-                $baseUrl = config('lurkchat-bot.base_url');
-            }catch (Exception $exception){}
-        }
-
-        if ($baseUrl) {
-            $this->baseUrl = $baseUrl;
-        }
+        $this->make($token, $baseUrl);
     }
 
     /**
@@ -92,12 +74,28 @@ class LurkchatBot {
      * @param null $baseUrl
      * @return LurkchatBot
      */
-    public function make($token, $baseUrl = null)
+    public function make($token =null, $baseUrl = null)
     {
-        if ($baseUrl){
+
+        // Try to set token from config if not provided
+        if (!$token){
+            try{
+                $token = config('lurkchat-bot.token');
+            }catch (Exception $exception){}
+        }
+
+        //Try to set url from config if not provided
+        if (!$baseUrl){
+            try{
+                $baseUrl = config('lurkchat-bot.base_url');
+            }catch (Exception $exception){}
+        }
+
+        if ($baseUrl) {
             $this->setBaseUrl($baseUrl);
         }
-        return $this->setToken($token);
+
+        return $this->setToken($token);;
     }
 
     /**
