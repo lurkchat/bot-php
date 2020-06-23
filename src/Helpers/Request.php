@@ -22,36 +22,29 @@ class Request
             throw new InvalidRequestMethodException();
         }
 
-        $client = new Client();
-        if($method == 'get') {
-            $response = $client->get($url, [
-                'query' => $data
-            ]);
-        }else{
-            $response = $client->post($url, [
-                'json' => $data
-            ]);
+        $response = [
+            'error' => 'Cannot get data from ' . $url
+        ];
+
+        try {
+            $client = new Client();
+            if($method == 'get') {
+                $response = $client->get($url, [
+                    'query' => $data
+                ]);
+            }else{
+                $response = $client->post($url, [
+                    'json' => $data
+                ]);
+            }
+
+        }catch (\Exception $exception){
+            if ($exception->getCode() == 400) {
+                $response = $exception->getResponse();
+            }
         }
 
         return json_decode((string) $response->getBody(), true);
-//        $ch = curl_init();
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//
-//        if ($method == 'post') {
-//            curl_setopt($ch, CURLOPT_URL, $url);
-//            curl_setopt($ch, CURLOPT_POST, 1);
-//            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-//                'Content-Type: application/json'
-//            ]);
-//            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-//        }else{
-//            $url = $url . '?'. http_build_query($data);
-//            curl_setopt($ch, CURLOPT_URL, $url);
-//        }
-//
-//        $server_output = curl_exec($ch);
-//        curl_close ($ch);
-//        return json_decode($server_output);
 
     }
 
