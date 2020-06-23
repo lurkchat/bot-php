@@ -23,7 +23,7 @@ class Request
         }
 
         try {
-            $client = new Client();
+            $client = new Client(['verify' => false]);
             if($method == 'get') {
                 $response = $client->get($url, [
                     'query' => $data
