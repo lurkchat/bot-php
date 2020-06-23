@@ -2,6 +2,7 @@
 
 namespace Lurkchat\Helpers;
 
+use GuzzleHttp\Client;
 use Lurkchat\Exceptions\InvalidRequestMethodException;
 
 class Request
@@ -20,24 +21,37 @@ class Request
         if (!in_array($method, ['post', 'get'])){
             throw new InvalidRequestMethodException();
         }
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        if ($method == 'post') {
-            curl_setopt($ch, CURLOPT_URL, $url);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json'
+        $client = new Client();
+        if($method == 'get') {
+            $response = $client->get($url, [
+                'query' => $data
             ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }else{
-            $url = $url . '?'. http_build_query($data);
-            curl_setopt($ch, CURLOPT_URL, $url);
+            $response = $client->post($url, [
+                'json' => $data
+            ]);
         }
 
-        $server_output = curl_exec($ch);
-        curl_close ($ch);
-        return json_decode($server_output);
+        return json_decode((string) $response->getBody(), true);
+//        $ch = curl_init();
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//
+//        if ($method == 'post') {
+//            curl_setopt($ch, CURLOPT_URL, $url);
+//            curl_setopt($ch, CURLOPT_POST, 1);
+//            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+//                'Content-Type: application/json'
+//            ]);
+//            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+//        }else{
+//            $url = $url . '?'. http_build_query($data);
+//            curl_setopt($ch, CURLOPT_URL, $url);
+//        }
+//
+//        $server_output = curl_exec($ch);
+//        curl_close ($ch);
+//        return json_decode($server_output);
 
     }
 
