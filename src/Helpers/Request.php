@@ -22,10 +22,6 @@ class Request
             throw new InvalidRequestMethodException();
         }
 
-        $response = [
-            'error' => 'Cannot get data from ' . $url
-        ];
-
         try {
             $client = new Client();
             if($method == 'get') {
@@ -39,12 +35,10 @@ class Request
             }
 
         }catch (\Exception $exception){
-            if ($exception->getCode() == 400) {
-                $response = $exception->getResponse();
-            }
+            $response = $exception->getResponse();
         }
 
-        return json_decode((string) $response->getBody(), true);
+        return json_decode((string) $response->getBody());
 
     }
 
